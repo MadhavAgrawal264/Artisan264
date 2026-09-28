@@ -6,6 +6,8 @@
 import { TRANSLATIONS, SUPPORTED_LANGUAGES } from "./translations.js";
 import { INITIAL_PRODUCTS, INITIAL_ARTISANS, CRAFT_CATEGORIES, INDIAN_STATES } from "./catalog-data.js";
 import { applyStudioEnhancement, generateMarketStallCard } from "./canvas-tools.js";
+import { MaterialPricingWizardController } from "./components/material-pricing-wizard.ts";
+
 
 // ==============================================================================
 // APP STATE
@@ -113,6 +115,13 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // Setup Interactive AI Artisan Advisor
   setupAIChatAdvisor();
+
+  // Setup Fair Pricing, Offline Sync & Village Trust Suite
+  const pricingMount = document.getElementById("material-pricing-wizard-mount");
+  if (pricingMount) {
+    const wizard = new MaterialPricingWizardController();
+    wizard.init(pricingMount);
+  }
   
   // Apply initial translations
   applyTranslations();
