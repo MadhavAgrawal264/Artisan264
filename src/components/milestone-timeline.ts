@@ -125,27 +125,27 @@ export function renderFinancialTimelineHTML(currentStatus: MilestoneStatus = "li
     let stepBadge = "";
 
     if (isCompleted) {
-      // High-contrast completed state (Emerald Green)
-      circleClasses = "bg-emerald-700 text-white border-4 border-emerald-200 shadow-md ring-2 ring-emerald-600";
-      labelColor = "text-emerald-900 font-extrabold";
+      // Completed state: Deep Forest Green with crisp white check
+      circleClasses = "bg-[#174C43] text-white border-4 border-[#EAF1ED] shadow-sm";
+      labelColor = "text-[#174C43] font-bold";
       stepBadge = `
-        <span class="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-emerald-600 flex items-center justify-center border-2 border-white shadow-xs">
+        <span class="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#174C43] flex items-center justify-center border-2 border-white shadow-xs">
           ${ICONS.check}
         </span>
       `;
     } else if (isCurrent) {
-      // High-contrast active pulsing state (Rich Warm Amber)
-      circleClasses = "bg-amber-600 text-white border-4 border-amber-200 shadow-lg ring-4 ring-amber-400 animate-pulse";
-      labelColor = "text-amber-950 font-black";
+      // Current active state: Warm Terracotta with subtle ring
+      circleClasses = "bg-[#C95D35] text-white border-4 border-[#FBF1ED] shadow-md ring-4 ring-[#C95D35]/20";
+      labelColor = "text-[#C95D35] font-black";
       stepBadge = `
-        <span class="absolute -top-1.5 -right-1.5 px-1.5 py-0.2 rounded-full bg-amber-800 text-[9px] font-black text-amber-100 uppercase tracking-wider border border-white">
+        <span class="absolute -top-1.5 -right-1.5 px-1.5 py-0.5 rounded-full bg-[#102F35] text-[9px] font-black text-[#FAF8F2] uppercase tracking-wider border border-white">
           Active
         </span>
       `;
     } else {
-      // Inactive / upcoming state (Neutral Slate with high readability)
-      circleClasses = "bg-stone-100 text-stone-400 border-4 border-stone-300";
-      labelColor = "text-stone-500 font-medium";
+      // Upcoming state: Subtle Warm Ivory
+      circleClasses = "bg-[#FAF8F2] text-[#566C70]/70 border-4 border-[#E6E2D6]";
+      labelColor = "text-[#566C70] font-medium";
     }
 
     return `
@@ -171,37 +171,37 @@ export function renderFinancialTimelineHTML(currentStatus: MilestoneStatus = "li
             <span class="text-xs sm:text-sm ${labelColor} leading-tight">${step.label}</span>
             <button 
               type="button" 
-              class="audio-btn p-1 rounded-full text-stone-400 hover:text-amber-700 hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors"
+              class="audio-btn p-1 rounded-full text-[#566C70] hover:text-[#174C43] hover:bg-[#EAF1ED] focus:outline-none focus:ring-2 focus:ring-[#174C43] transition-colors"
               data-audio-text="${step.label}. ${step.description}"
               aria-label="Listen to step description: ${step.label}"
             >
-              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polyline>
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
                 <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
               </svg>
             </button>
           </div>
-          <p class="text-[10px] text-stone-500 font-semibold line-clamp-1">${step.vernacularLabel}</p>
-          <p class="text-[10px] text-stone-400 hidden md:block leading-tight">${step.description}</p>
+          <p class="text-[10px] text-[#566C70] font-semibold line-clamp-1">${step.vernacularLabel}</p>
+          <p class="text-[10px] text-[#566C70]/80 hidden md:block leading-tight">${step.description}</p>
         </div>
       </div>
     `;
   }).join("");
 
   return `
-    <div class="w-full bg-white rounded-3xl p-5 sm:p-7 border border-stone-200 shadow-sm space-y-4">
+    <div class="w-full bg-white rounded-2xl p-6 sm:p-8 border border-[#E6E2D6] shadow-xs space-y-6">
       <!-- Header with audio narration button -->
-      <div class="flex items-center justify-between pb-3 border-b border-stone-100">
-        <div class="flex items-center gap-2">
-          <span class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
-          <h3 class="text-base sm:text-lg font-bold text-stone-900 font-serif">
+      <div class="flex items-center justify-between pb-4 border-b border-[#E6E2D6]">
+        <div class="flex items-center gap-2.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#174C43] pulse-subtle"></span>
+          <h3 class="text-base sm:text-lg font-bold text-[#102F35] font-serif">
             Financial Movement & Trust Timeline
           </h3>
         </div>
         <button 
           type="button" 
-          class="audio-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300 hover:bg-amber-200 shadow-xs"
-          data-audio-text="Financial Movement Timeline. Tracks your craft money from listing, to sale, to packing, and direct transfer into your bank account."
+          class="audio-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#FAF8F2] text-[#174C43] border border-[#E6E2D6] hover:bg-[#F0ECE1] transition-colors shadow-2xs"
+          data-audio-text="Financial Movement Timeline. Tracks craft payment from listing, to sale, to packing, and direct transfer into your bank account."
           aria-label="Listen to timeline overview"
         >
           <span>🔊</span>
@@ -212,12 +212,12 @@ export function renderFinancialTimelineHTML(currentStatus: MilestoneStatus = "li
       <!-- Linear Connector Timeline -->
       <div class="relative pt-3 pb-2" role="list" aria-label="Craft payment progress stages">
         <!-- Background Track -->
-        <div class="absolute top-9 sm:top-11 left-8 right-8 h-2 bg-stone-200 rounded-full z-0"></div>
+        <div class="absolute top-9 sm:top-11 left-8 right-8 h-1.5 bg-[#E6E2D6] rounded-full z-0"></div>
 
         <!-- Dynamic High-Contrast Progress Bar -->
         <div 
           id="timeline-progress-bar"
-          class="absolute top-9 sm:top-11 left-8 h-2 bg-gradient-to-r from-emerald-600 via-amber-500 to-amber-600 rounded-full z-0 transition-all duration-500"
+          class="absolute top-9 sm:top-11 left-8 h-1.5 bg-gradient-to-r from-[#174C43] to-[#C95D35] rounded-full z-0 transition-all duration-500"
           style="width: calc((100% - 4rem) * ${progressPercent / 100});"
         ></div>
 
@@ -228,12 +228,12 @@ export function renderFinancialTimelineHTML(currentStatus: MilestoneStatus = "li
       </div>
 
       <!-- Village Guarantee Badge -->
-      <div class="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-between text-xs text-emerald-900">
+      <div class="p-4 rounded-xl bg-[#EAF1ED] border border-[#6F9B88]/30 flex items-center justify-between text-xs text-[#174C43]">
         <div class="flex items-center gap-2">
           <span class="text-base">🛡️</span>
-          <span><strong>Zero Middleman Deduction:</strong> 100% of the calculated living wage reaches your bank account directly upon buyer delivery.</span>
+          <span><strong>Zero Middleman Cut:</strong> 100% of the calculated living wage reaches your bank account directly upon buyer delivery.</span>
         </div>
-        <span class="font-bold uppercase tracking-wider text-[10px] bg-emerald-200/80 px-2.5 py-1 rounded-md">Direct Trade</span>
+        <span class="font-bold uppercase tracking-wider text-[10px] bg-white px-2.5 py-1 rounded-md border border-[#6F9B88]/40">Direct Trade</span>
       </div>
     </div>
   `;

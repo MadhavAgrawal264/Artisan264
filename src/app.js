@@ -14,7 +14,7 @@ import { MaterialPricingWizardController } from "./components/material-pricing-w
 // ==============================================================================
 const state = {
   currentLang: "hi", // Default to Hindi for Indian artisan accessibility
-  activeTab: "catalog",
+  activeTab: "home",
   userRole: "artisan", // 'artisan' | 'buyer'
   isHighContrast: false,
   isLargeFont: false,
@@ -221,7 +221,7 @@ function setupNavigation() {
   navButtons.forEach(btn => {
     btn.addEventListener("click", () => {
       const targetTab = btn.getAttribute("data-tab");
-      switchTab(targetTab);
+      if (targetTab) switchTab(targetTab);
     });
   });
 
@@ -234,10 +234,39 @@ function setupNavigation() {
   if (heroCtaCatalog) {
     heroCtaCatalog.addEventListener("click", () => switchTab("cataloging"));
   }
+
   const heroCtaBrowse = document.getElementById("hero-cta-browse");
   if (heroCtaBrowse) {
     heroCtaBrowse.addEventListener("click", () => switchTab("catalog"));
   }
+
+  const heroCtaPricing = document.getElementById("hero-cta-pricing");
+  if (heroCtaPricing) {
+    heroCtaPricing.addEventListener("click", () => switchTab("pricing-engine"));
+  }
+
+  const btnStudioAdd = document.getElementById("btn-studio-add-craft");
+  if (btnStudioAdd) {
+    btnStudioAdd.addEventListener("click", () => switchTab("cataloging"));
+  }
+
+  const btnStudioProfile = document.getElementById("btn-studio-view-profile");
+  if (btnStudioProfile) {
+    btnStudioProfile.addEventListener("click", () => switchTab("artisan-profile"));
+  }
+
+  // Home Page Category Cards
+  document.querySelectorAll("[data-home-category]").forEach(card => {
+    card.addEventListener("click", () => {
+      const cat = card.getAttribute("data-home-category");
+      if (cat) {
+        state.selectedCategory = cat;
+        const filterEl = document.getElementById("catalog-category-filter");
+        if (filterEl) filterEl.value = cat;
+        switchTab("catalog");
+      }
+    });
+  });
 }
 
 function switchTab(tabName) {
@@ -254,11 +283,11 @@ function switchTab(tabName) {
   document.querySelectorAll(".nav-tab-btn").forEach(btn => {
     const isCurrent = btn.getAttribute("data-tab") === tabName;
     if (isCurrent) {
-      btn.classList.add("text-amber-700", "font-bold", "border-b-2", "border-amber-700");
-      btn.classList.remove("text-stone-500");
+      btn.classList.add("text-[#174C43]", "font-bold", "border-b-2", "border-[#174C43]");
+      btn.classList.remove("text-[#102F35]/70", "border-transparent");
     } else {
-      btn.classList.remove("text-amber-700", "font-bold", "border-b-2", "border-amber-700");
-      btn.classList.add("text-stone-500");
+      btn.classList.remove("text-[#174C43]", "font-bold", "border-b-2", "border-[#174C43]");
+      btn.classList.add("text-[#102F35]/70", "border-transparent");
     }
   });
 
@@ -268,6 +297,10 @@ function switchTab(tabName) {
     renderCatalog();
   } else if (tabName === "studio" || tabName === "inquiries") {
     renderArtisanStudio();
+  } else if (tabName === "artisan-profile") {
+    renderArtisanProfilePage();
+  } else if (tabName === "settings") {
+    renderSettingsPage();
   }
 }
 
@@ -1097,47 +1130,50 @@ function renderCatalog() {
     const mats = Array.isArray(p.materials) ? p.materials.slice(0, 2).join(" • ") : p.materials;
 
     return `
-      <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col group">
+      <div class="craft-card rounded-2xl overflow-hidden bg-white border border-[#E6E2D6] flex flex-col group transition-all duration-300 hover:shadow-lg hover:border-[#6F9B88]/50">
         <!-- Image Container -->
-        <div class="relative aspect-[4/3] bg-stone-100 overflow-hidden">
+        <div class="relative aspect-[4/3] bg-[#FAF8F2] overflow-hidden">
           <img 
             src="${p.enhancedImageUrl || p.imageUrl}" 
             alt="${localizedTitle}" 
             loading="lazy"
-            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
           />
           ${p.hasGiTag ? `
-            <span class="absolute top-2.5 left-2.5 bg-orange-600/90 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1">
+            <span class="absolute top-3 left-3 bg-white/95 backdrop-blur-xs text-[#C95D35] border border-[#F3D5C8] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-xs flex items-center gap-1">
               <span>✦</span> GI Tagged
             </span>
           ` : ""}
-          <span class="absolute bottom-2.5 right-2.5 bg-stone-900/80 backdrop-blur-xs text-white text-[11px] font-medium px-2 py-0.5 rounded-md">
+          <span class="absolute bottom-3 right-3 bg-[#102F35]/85 backdrop-blur-xs text-white text-[11px] font-medium px-2.5 py-0.5 rounded-full shadow-xs">
             ${p.originState || "India"}
           </span>
         </div>
 
         <!-- Content -->
-        <div class="p-4 flex-1 flex flex-col justify-between">
+        <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between">
           <div>
-            <div class="text-xs text-stone-500 font-medium mb-1">${p.category}</div>
-            <h3 class="font-bold text-stone-900 text-sm sm:text-base leading-snug line-clamp-2 mb-2">
+            <div class="flex items-center justify-between text-xs text-[#6F9B88] font-bold uppercase tracking-wider mb-1.5">
+              <span>${p.category}</span>
+              <span class="text-[11px] text-[#566C70] font-normal">${artisan.fullName}</span>
+            </div>
+            <h3 class="font-serif font-bold text-[#102F35] text-base leading-snug line-clamp-2 mb-2 group-hover:text-[#174C43] transition-colors">
               ${localizedTitle}
             </h3>
-            <p class="text-xs text-stone-500 mb-3 flex items-center gap-1.5">
+            <p class="text-xs text-[#566C70] mb-3 flex items-center gap-1.5 truncate">
               <span>🌱</span> <span>${mats || "Natural Artisanal Materials"}</span>
             </p>
           </div>
 
-          <div class="pt-3 border-t border-stone-100 flex items-center justify-between">
+          <div class="pt-3.5 border-t border-[#F0ECE1] flex items-center justify-between">
             <div>
-              <div class="text-[10px] text-stone-400 uppercase tracking-wider font-medium">Fair Direct Price</div>
-              <div class="text-lg font-extrabold text-amber-700">₹${Number(p.finalPrice).toLocaleString("en-IN")}</div>
+              <div class="text-[10px] text-[#566C70] uppercase tracking-wider font-semibold">Fair Direct Price</div>
+              <div class="text-lg font-bold text-[#174C43]">₹${Number(p.finalPrice).toLocaleString("en-IN")}</div>
             </div>
             <div class="flex items-center gap-1.5">
               <button 
                 data-action="view-product" 
                 data-id="${p.id}"
-                class="px-2.5 py-1.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-semibold"
+                class="px-2.5 py-1.5 rounded-xl bg-[#FAF8F2] hover:bg-[#F0ECE1] text-[#102F35] text-xs font-semibold border border-[#E6E2D6] transition-colors"
                 title="View Full Story & Details"
               >
                 Story
@@ -1145,7 +1181,7 @@ function renderCatalog() {
               <button 
                 data-action="share-card" 
                 data-id="${p.id}"
-                class="px-2.5 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-semibold"
+                class="px-2.5 py-1.5 rounded-xl bg-[#EAF1ED] hover:bg-[#D5E4DC] text-[#174C43] text-xs font-semibold border border-[#CFDFD7] transition-colors"
                 title="Generate Market Stall Card"
               >
                 Card
@@ -1153,7 +1189,7 @@ function renderCatalog() {
               <button 
                 data-action="open-inquiry" 
                 data-id="${p.id}"
-                class="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shadow-xs"
+                class="px-3.5 py-1.5 rounded-xl bg-[#174C43] hover:bg-[#102F35] text-white text-xs font-semibold shadow-xs transition-colors"
               >
                 Buy
               </button>
@@ -1348,7 +1384,7 @@ function renderArtisanStudio() {
 
   if (inquiriesList) {
     if (state.inquiries.length === 0) {
-      inquiriesList.innerHTML = `<div class="p-6 text-center text-stone-500">No buyer inquiries received yet.</div>`;
+      inquiriesList.innerHTML = `<div class="p-8 text-center text-[#566C70] bg-white rounded-2xl border border-[#E6E2D6]">No buyer inquiries received yet. When conscious buyers inquire about your crafts, their direct leads will appear here.</div>`;
       return;
     }
 
@@ -1358,31 +1394,32 @@ function renderArtisanStudio() {
       const waLink = `https://wa.me/${rawPhone}?text=${encodeURIComponent(`Namaste ${inq.buyerName}, thank you for your interest in our handcrafted ${prod.title}. I am happy to discuss your order!`)}`;
 
       return `
-        <div class="p-4 bg-white rounded-xl border border-stone-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="p-4 sm:p-5 bg-white rounded-2xl border border-[#E6E2D6] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-[#6F9B88]/50 transition-colors">
           <div>
-            <div class="flex items-center gap-2 mb-1">
-              <span class="font-bold text-stone-900 text-sm">${inq.buyerName}</span>
-              <span class="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 font-medium">${inq.quantity} unit(s)</span>
-              <span class="text-[11px] text-stone-400">${new Date(inq.createdAt).toLocaleDateString()}</span>
+            <div class="flex flex-wrap items-center gap-2 mb-1.5">
+              <span class="font-bold text-[#102F35] text-sm sm:text-base">${inq.buyerName}</span>
+              <span class="text-xs px-2.5 py-0.5 rounded-full bg-[#FAF0EC] text-[#C95D35] font-semibold border border-[#F3D5C8]">${inq.quantity} unit(s)</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-[#EAF1ED] text-[#174C43] font-bold border border-[#CFDFD7]">New Lead</span>
+              <span class="text-[11px] text-[#566C70]">${new Date(inq.createdAt).toLocaleDateString()}</span>
             </div>
-            <div class="text-xs text-stone-600 mb-1">
-              <strong>Item:</strong> ${prod.title} (₹${prod.finalPrice})
+            <div class="text-xs text-[#102F35] mb-1 font-medium">
+              <strong>Item:</strong> ${prod.title} (₹${Number(prod.finalPrice).toLocaleString("en-IN")})
             </div>
-            <div class="text-xs text-stone-500">
-              📍 ${inq.buyerLocation || "India"} | 💬 "${inq.message || "Interested in buying"}"
+            <div class="text-xs text-[#566C70]">
+              📍 ${inq.buyerLocation || "India"} • 💬 "${inq.message || "Interested in ordering direct from artisan"}"
             </div>
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 flex-shrink-0">
             <a 
               href="${waLink}" 
               target="_blank" 
-              class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center gap-1"
+              class="px-3.5 py-2 rounded-xl bg-[#174C43] hover:bg-[#102F35] text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors"
             >
-              <span>💬</span> WhatsApp Buyer
+              <span>💬</span> WhatsApp
             </a>
             <a 
               href="tel:${inq.buyerPhone}" 
-              class="px-3 py-1.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-semibold flex items-center gap-1"
+              class="px-3.5 py-2 rounded-xl bg-[#FAF8F2] hover:bg-[#F0ECE1] text-[#102F35] border border-[#E6E2D6] text-xs font-semibold flex items-center gap-1.5 transition-colors"
             >
               <span>📞</span> Call
             </a>
@@ -1390,6 +1427,125 @@ function renderArtisanStudio() {
         </div>
       `;
     }).join("");
+  }
+}
+
+// ==============================================================================
+// 12B. ARTISAN PROFILE PAGE & SETTINGS PAGE
+// ==============================================================================
+function renderArtisanProfilePage() {
+  const profileGrid = document.getElementById("artisan-profile-products-grid");
+  if (!profileGrid) return;
+
+  const artisanProducts = state.products.filter(p => p.artisanId === "artisan-1");
+  profileGrid.innerHTML = artisanProducts.map(p => {
+    const localizedTitle = (p.titleRegional && p.titleRegional[state.currentLang]) || p.title;
+    return `
+      <div class="craft-card rounded-2xl overflow-hidden bg-white border border-[#E6E2D6] flex flex-col group transition-all duration-300 hover:shadow-lg">
+        <div class="relative aspect-[4/3] bg-[#FAF8F2] overflow-hidden">
+          <img src="${p.enhancedImageUrl || p.imageUrl}" alt="${localizedTitle}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          ${p.hasGiTag ? `
+            <span class="absolute top-3 left-3 bg-white/95 text-[#C95D35] border border-[#F3D5C8] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">
+              ✦ GI Tagged
+            </span>
+          ` : ""}
+        </div>
+        <div class="p-4 flex-1 flex flex-col justify-between">
+          <div>
+            <div class="text-xs text-[#6F9B88] font-bold uppercase mb-1">${p.category}</div>
+            <h4 class="font-serif font-bold text-[#102F35] text-sm leading-snug line-clamp-2 mb-2">${localizedTitle}</h4>
+          </div>
+          <div class="pt-3 border-t border-[#F0ECE1] flex items-center justify-between">
+            <div class="text-base font-bold text-[#174C43]">₹${Number(p.finalPrice).toLocaleString("en-IN")}</div>
+            <button 
+              data-action="view-product" 
+              data-id="${p.id}"
+              class="px-3 py-1.5 rounded-xl bg-[#174C43] text-white text-xs font-semibold hover:bg-[#102F35] transition-colors"
+            >
+              View Story
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  profileGrid.querySelectorAll("button[data-action='view-product']").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const prodId = btn.getAttribute("data-id");
+      const prod = state.products.find(p => p.id === prodId);
+      if (prod) openProductDetailModal(prod);
+    });
+  });
+
+  const waBtn = document.getElementById("artisan-profile-whatsapp");
+  if (waBtn) {
+    const rawPhone = (state.currentArtisan.phone || "").replace(/\D/g, "");
+    waBtn.onclick = () => {
+      const waText = encodeURIComponent(`Namaste Sitadevi Devi! I came across your master artisan profile on Artisan and would love to learn more about your traditional Madhubani paintings.`);
+      window.open(`https://wa.me/${rawPhone || "919876543210"}?text=${waText}`, "_blank");
+    };
+  }
+
+  const callBtn = document.getElementById("artisan-profile-call");
+  if (callBtn) {
+    callBtn.onclick = () => {
+      window.location.href = `tel:${state.currentArtisan.phone || "+919876543210"}`;
+    };
+  }
+}
+
+function renderSettingsPage() {
+  const settingsLang = document.getElementById("settings-lang-select");
+  if (settingsLang) {
+    settingsLang.innerHTML = SUPPORTED_LANGUAGES.map(
+      l => `<option value="${l.code}" ${l.code === state.currentLang ? "selected" : ""}>${l.name} (${l.label})</option>`
+    ).join("");
+    settingsLang.onchange = (e) => {
+      state.currentLang = e.target.value;
+      const topSelect = document.getElementById("lang-select");
+      if (topSelect) topSelect.value = state.currentLang;
+      applyTranslations();
+      renderCatalog();
+      renderArtisanStudio();
+    };
+  }
+
+  const contrastToggle = document.getElementById("settings-contrast-toggle");
+  if (contrastToggle) {
+    contrastToggle.checked = state.isHighContrast;
+    contrastToggle.onchange = () => {
+      state.isHighContrast = contrastToggle.checked;
+      document.body.classList.toggle("high-contrast", state.isHighContrast);
+    };
+  }
+
+  const fontToggle = document.getElementById("settings-font-toggle");
+  if (fontToggle) {
+    fontToggle.checked = state.isLargeFont;
+    fontToggle.onchange = () => {
+      state.isLargeFont = fontToggle.checked;
+      document.body.classList.toggle("large-text", state.isLargeFont);
+    };
+  }
+
+  const roleSelect = document.getElementById("settings-role-select");
+  if (roleSelect) {
+    roleSelect.value = state.userRole;
+    roleSelect.onchange = () => {
+      state.userRole = roleSelect.value;
+      updateRoleBadge();
+    };
+  }
+
+  const syncBtn = document.getElementById("settings-btn-sync-now");
+  if (syncBtn) {
+    syncBtn.onclick = () => {
+      showToast("Synchronizing village catalog with cloud...", "info");
+      setTimeout(() => {
+        showToast("Village database 100% in sync with cloud registry!", "success");
+      }, 1200);
+    };
   }
 }
 
